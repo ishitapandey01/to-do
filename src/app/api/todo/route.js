@@ -31,19 +31,19 @@ export async function GET(request) {
   try {
     await DBConnection();
     
-    // Get query parameters for filtering and sorting
+    
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const sortBy = searchParams.get('sortBy') || 'createdAt';
     const sortOrder = searchParams.get('sortOrder') || 'desc';
     
-    // Build filter object
+    
     let filter = {};
     if (status && status !== 'all') {
       filter.status = status;
     }
     
-    // Build sort object
+   
     const sortObj = {};
     sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
     
