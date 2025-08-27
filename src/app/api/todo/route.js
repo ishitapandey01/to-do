@@ -4,18 +4,18 @@ import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
-    const { title, desc } = await request.json();
+    const { title, desc, status = 'pending' } = await request.json();
     if (!title || !desc) {
       return NextResponse.json(
-        { success: false, message: "All fields are required" },
-        { status: 303 }
+        { success: false, message: "Title and description are required" },
+        { status: 400 }
       );
     }
     await DBConnection();
 
-    const todo = await UserModel.create({ title, desc });
+    const todo = await UserModel.create({ title, desc, status });
     return NextResponse.json(
-      { success: true, message: "Todo created successfully", todo },
+      { success: true, message: "Task created successfully", todo },
       { status: 200 }
     );
   } catch (error) {
@@ -27,11 +27,28 @@ export async function POST(request) {
   }
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
     await DBConnection();
-    const todo = await UserModel.find();
-    return NextResponse.json({ success: true, todo }, { status: 200 });
+    
+    // Get query parameters for filtering and sorting
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
+    
+    // Build filter object
+    let filter = {};
+    if (status && status !== 'all') {
+      filter.status = status;
+    }
+    
+    // Build sort object
+    const sortObj = {};
+    sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    
+    const todos = await UserModel.find(filter).sort(sortObj);
+    return NextResponse.json({ success: true, todo: todos }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

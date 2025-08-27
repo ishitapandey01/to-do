@@ -4,64 +4,150 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
+import { IoArrowBack } from 'react-icons/io5'
 
-export default function page() {
-    const {push}=useRouter()
-    const [value,setValue]=useState({
-        title:"",
-        desc:""
+export default function AddTaskPage() {
+    const { push } = useRouter()
+    const [value, setValue] = useState({
+        title: "",
+        desc: "",
+        status: "pending"
     })
-    const handleOnchange=(e)=>{
+    const [loading, setLoading] = useState(false)
+
+    const handleOnchange = (e) => {
         setValue({
             ...value,
-            [e.target.name]:e.target.value
+            [e.target.name]: e.target.value
         })
     }
-    const handleSubmit=async()=>{
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        
+        if (!value.title.trim() || !value.desc.trim()) {
+            toast.error('Please fill in all fields')
+            return
+        }
+
         try {
-          const request=await axios.post('/api/todo',value)
-          const response= request.data
-          if (request.status==200) {
-            toast.success(response.message)
-              
-              push('/')
+            setLoading(true)
+            const request = await axios.post('/api/todo', value)
+            const response = request.data
             
-          }
+            if (request.status === 200) {
+                toast.success(response.message)
+                push('/')
+            }
         } catch (error) {
             console.log(error)
             if (error.response) {
                 toast.error(error.response.data.message)
-              
-              }
-            
+            } else {
+                toast.error('Something went wrong')
+            }
+        } finally {
+            setLoading(false)
         }
     }
-  return (
-   <>
-      <div className='flex justify-center  h-screen'>
-             <div className='mt-8 flex gap-8 flex-col p-10 rounded-lg h-80 shadow-lg bg-customPurple'>
-                <h1 className='text-white font-bold text-2xl'>Enter Todo</h1>
-             <label class="relative block">
-  {/* <span class="text-white text-lg mb-20 mt-20 ">Tittle</span> */}
-  <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-   
-  </span>
-  <input   class="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Enter you title" type="text" 
-   value={value.title} name='title'  onChange={handleOnchange} />
-</label>
-<label class="relative block">
-  {/* <span class="text-white text-lg mb-20 mt-20 ">Tittle</span> */}
-  <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-   
-  </span>
-  <input value={ value.desc} name='desc' onChange={handleOnchange} class="placeholder:italic placeholder:text-slate-400 block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Enter you description" type="text"/>
-</label>
 
-   <button className='rounded-lg bg-green-500 px-4 py-2 text-white font-bold  ' onClick={handleSubmit}>Submit</button>
-             </div>
-      </div>
-   
-   
-   </>
-  )
+    const handleBack = () => {
+        push('/')
+    }
+
+    return (
+        <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8'>
+            <div className='max-w-2xl mx-auto px-4'>
+                {/* Header */}
+                <div className='mb-8'>
+                    <button 
+                        onClick={handleBack}
+                        className='flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors'
+                    >
+                        <IoArrowBack size={20} />
+                        <span>Back to Tasks</span>
+                    </button>
+                    <h1 className='text-3xl font-bold text-gray-800'>Create New Task</h1>
+                    <p className='text-gray-600 mt-2'>Add a new task to your list</p>
+                </div>
+
+                {/* Form */}
+                <div className='bg-white rounded-2xl shadow-lg p-8'>
+                    <form onSubmit={handleSubmit} className='space-y-6'>
+                        {/* Title */}
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700 mb-2'>
+                                Task Title *
+                            </label>
+                            <input
+                                type="text"
+                                name="title"
+                                value={value.title}
+                                onChange={handleOnchange}
+                                placeholder="Enter task title..."
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customPurple focus:border-transparent transition-colors"
+                                maxLength={100}
+                            />
+                            <div className='text-right text-sm text-gray-500 mt-1'>
+                                {value.title.length}/100
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700 mb-2'>
+                                Description *
+                            </label>
+                            <textarea
+                                name="desc"
+                                value={value.desc}
+                                onChange={handleOnchange}
+                                placeholder="Enter task description..."
+                                rows={4}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customPurple focus:border-transparent transition-colors resize-none"
+                                maxLength={500}
+                            />
+                            <div className='text-right text-sm text-gray-500 mt-1'>
+                                {value.desc.length}/500
+                            </div>
+                        </div>
+
+                        {/* Status */}
+                        <div>
+                            <label className='block text-sm font-medium text-gray-700 mb-2'>
+                                Initial Status
+                            </label>
+                            <select
+                                name="status"
+                                value={value.status}
+                                onChange={handleOnchange}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customPurple focus:border-transparent transition-colors"
+                            >
+                                <option value="pending">Pending</option>
+                                <option value="done">Completed</option>
+                            </select>
+                        </div>
+
+                        {/* Buttons */}
+                        <div className='flex gap-4 pt-4'>
+                            <button
+                                type="button"
+                                onClick={handleBack}
+                                className='flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium'
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className='flex-1 px-6 py-3 bg-customPurple hover:bg-purple-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            >
+                                {loading ? 'Creating...' : 'Create Task'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    )
 }

@@ -8,7 +8,7 @@ export async function GET(request, { params }) {
         const todo = await UserModel.findById(params.id);
         if (!todo) {
             return NextResponse.json(
-                { success: false, message: "Todo not found" },
+                { success: false, message: "Task not found" },
                 { status: 404 }
             );
         }
@@ -24,21 +24,28 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
     try {
-        const { title, desc } = await request.json();
+        const { title, desc, status } = await request.json();
         await DBConnection();
+        
+        const updateData = {};
+        if (title !== undefined) updateData.title = title;
+        if (desc !== undefined) updateData.desc = desc;
+        if (status !== undefined) updateData.status = status;
+        
         const updatedTodo = await UserModel.findByIdAndUpdate(
             params.id,
-            { title, desc },
+            updateData,
             { new: true }
         );
+        
         if (!updatedTodo) {
             return NextResponse.json(
-                { success: false, message: "Todo not found" },
+                { success: false, message: "Task not found" },
                 { status: 404 }
             );
         }
         return NextResponse.json(
-            { success: true, message: "Todo updated successfully", updatedTodo },
+            { success: true, message: "Task updated successfully", todo: updatedTodo },
             { status: 200 }
         );
     } catch (error) {
@@ -53,4 +60,24 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
     try {
         await DBConnection();
-        const deleted
+        const deletedTodo = await UserModel.findByIdAndDelete(params.id);
+        
+        if (!deletedTodo) {
+            return NextResponse.json(
+                { success: false, message: "Task not found" },
+                { status: 404 }
+            );
+        }
+        
+        return NextResponse.json(
+            { success: true, message: "Task deleted successfully" },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        );
+    }
+}
