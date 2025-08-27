@@ -11,21 +11,19 @@ The app allows users to create, view, update, and delete tasks through a clean, 
 
 - Add tasks with title, description, and status (pending or completed)  
 - View all tasks in a structured list  
-- Edit task details and update their status  
-- Delete tasks permanently  
+- Edit task details , update their status and Delete tasks
 - Filter and sort tasks by status and creation date  
-- Responsive UI with TailwindCSS  
-- API-based architecture using Next.js server routes  
+- Responsive UI
 - Deployed on Vercel with automatic GitHub integration  
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** Next.js 14, React, TailwindCSS  
+- **Frontend:** Next.js 14, React
 - **Backend:** Next.js API Routes  
 - **Database:** MongoDB (via Mongoose)  
-- **Other Tools:** Axios, ESLint, React Hot Toast, Vercel for deployment  
+- **Other Tools:** Vercel for deployment  
 
 ---
 
