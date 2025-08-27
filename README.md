@@ -11,13 +11,11 @@ Add tasks with title, description, and status (pending or completed)
 
 View all tasks in a structured list
 
-Edit task details and update their status
-
-Delete tasks permanently
+Edit , Update and Delete task details
 
 Filter and sort tasks by status and creation date
 
-Responsive UI with TailwindCSS
+Responsive UI 
 
 API-based architecture using Next.js server routes
 
@@ -31,7 +29,7 @@ Backend: Next.js API Routes
 
 Database: MongoDB (via Mongoose)
 
-Other Tools: Axios, ESLint, React Hot Toast, Vercel for deployment
+ Vercel for deployment
 
 Project Structure
 /src
@@ -72,44 +70,6 @@ Run the development server
 
 npm run dev
 
-
-Build for production
-
-npm run build
-npm start
-
-API Endpoints
-POST /api/todo
-
-Create a new task.
-Body:
-
-{ "title": "Task Title", "desc": "Task description", "status": "pending" }
-
-GET /api/todo
-
-Fetch all tasks. Supports query parameters:
-
-status → filter by status (pending/done/all)
-
-sortBy → field to sort (default: createdAt)
-
-sortOrder → asc or desc
-
-GET /api/todo/[id]
-
-Fetch a single task by its ID.
-
-PUT /api/todo/[id]
-
-Update a task by ID.
-Body:
-
-{ "title": "...", "desc": "...", "status": "done" }
-
-DELETE /api/todo/[id]
-
-Delete a task by ID.
 
 Deployment
 
