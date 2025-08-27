@@ -45,7 +45,7 @@ export default function Modal({ isVisible, onClose, handleDelete, taskTitle = "t
             {/* Body */}
             <div className="px-6 py-4">
               <p className="text-sm text-gray-600 text-center">
-                Are you sure you want to delete <span className="font-medium text-gray-900">"{taskTitle}"</span>? 
+                Are you sure you want to delete <span className="font-medium text-gray-900">&quot;{taskTitle}&quot;</span>? 
                 This action cannot be undone and all task data will be permanently removed.
               </p>
             </div>
